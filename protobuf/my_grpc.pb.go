@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreetServiceClient interface {
 	Greet(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error)
+	GreetManyTime(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (GreetService_GreetManyTimeClient, error)
 }
 
 type greetServiceClient struct {
@@ -40,11 +41,44 @@ func (c *greetServiceClient) Greet(ctx context.Context, in *GreetRequest, opts .
 	return out, nil
 }
 
+func (c *greetServiceClient) GreetManyTime(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (GreetService_GreetManyTimeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[0], "/greet.GreetService/GreetManyTime", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceGreetManyTimeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type GreetService_GreetManyTimeClient interface {
+	Recv() (*GreetResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceGreetManyTimeClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceGreetManyTimeClient) Recv() (*GreetResponse, error) {
+	m := new(GreetResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetServiceServer is the server API for GreetService service.
 // All implementations must embed UnimplementedGreetServiceServer
 // for forward compatibility
 type GreetServiceServer interface {
 	Greet(context.Context, *GreetRequest) (*GreetResponse, error)
+	GreetManyTime(*GreetRequest, GreetService_GreetManyTimeServer) error
 }
 
 func RegisterGreetServiceServer(s grpc.ServiceRegistrar, srv GreetServiceServer) {
@@ -69,6 +103,27 @@ func _GreetService_Greet_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GreetService_GreetManyTime_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GreetRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GreetServiceServer).GreetManyTime(m, &greetServiceGreetManyTimeServer{stream})
+}
+
+type GreetService_GreetManyTimeServer interface {
+	Send(*GreetResponse) error
+	grpc.ServerStream
+}
+
+type greetServiceGreetManyTimeServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceGreetManyTimeServer) Send(m *GreetResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // GreetService_ServiceDesc is the grpc.ServiceDesc for GreetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -81,6 +136,12 @@ var GreetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GreetService_Greet_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GreetManyTime",
+			Handler:       _GreetService_GreetManyTime_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "protobuf/my.proto",
 }

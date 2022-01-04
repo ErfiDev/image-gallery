@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"github.com/erfidev/grpc-app/protobuf"
@@ -30,10 +31,21 @@ func NewRequest(cc protobuf.GreetServiceClient, name, family string) {
 		},
 	}
 
-	res, err := cc.Greet(context.Background(), &req)
+	res, err := cc.GreetManyTime(context.Background(), &req)
 	if err != nil {
 		log.Fatalf("error on sending request to server: %v", err)
 	}
 
-	log.Println(res)
+	for {
+		result, err := res.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatalf("error on reading respone stream: %s", err)
+		}
+
+		log.Printf("\nresult: %s", result)
+	}
 }

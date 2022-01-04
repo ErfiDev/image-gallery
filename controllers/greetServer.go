@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/erfidev/grpc-app/protobuf"
 )
@@ -20,4 +21,19 @@ func (*GreetServer) Greet(ctx context.Context, req *protobuf.GreetRequest) (*pro
 	}
 
 	return &res, nil
+}
+
+func (*GreetServer) GreetManyTime(req *protobuf.GreetRequest, stream protobuf.GreetService_GreetManyTimeServer) error {
+	firstName := req.GetGreet().GetFirstName()
+
+	for i := 0; i <= 10; i++ {
+		res := protobuf.GreetResponse{
+			Result: fmt.Sprintf("hello %s welcome to server stream: %d", firstName, i),
+		}
+
+		stream.Send(&res)
+		time.Sleep(500)
+	}
+
+	return nil
 }
