@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package protobuf;
+option go_package = "/protobuf";
+
+message Req {
+  string name = 1;
+  string addr = 2;
+}
+
+message DeleteReq {
+  string uuid = 1;
+}
+
+message Res {
+  int64 status = 1;
+  string msg = 2;
+}
+
+service FileUploader {
+  rpc Upload(Req) returns (Res) {};
+  rpc Edit(Req) returns (Res) {};
+  rpc Delete(DeleteReq) returns (Res) {};
+}

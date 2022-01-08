@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/erfidev/grpc-api/protobuf"
+	"github.com/erfidev/file-uploader/protobuf"
 )
 
 type GreetingController struct {

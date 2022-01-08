@@ -1,4 +1,4 @@
-module github.com/erfidev/grpc-api
+module github.com/erfidev/file-uploader
 
 go 1.16
 

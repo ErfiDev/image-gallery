@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/erfidev/grpc-api/controller"
-	"github.com/erfidev/grpc-api/protobuf"
+	"github.com/erfidev/file-uploader/controller"
+	"github.com/erfidev/file-uploader/protobuf"
 	"google.golang.org/grpc"
 	"log"
 	"net"
