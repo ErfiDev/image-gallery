@@ -24,25 +24,26 @@ func main() {
 	if err != nil {
 		log.Fatalf("error on tcp listen: %s", err)
 	}
+	newLogger := log.New(os.Stdout, "FileUploader" , log.Ldate|log.Ltime)
+	App.Logger = newLogger
+	db.SetApp(&App)
 
-		host := os.Getenv("HOST")
+
+	host := os.Getenv("HOST")
 	dbuser := os.Getenv("DB_USER")
 	dbpass := os.Getenv("DB_PASS")
 	dbname := os.Getenv("DB_NAME")
 	port := os.Getenv("PORT")
-	conn := db.Connect(db.Postgresql{
+	dbCon := db.Connect(db.Postgresql{
 		Host: host,
 		DbPass: dbpass,
 		DbName: dbname,
 		DbUser: dbuser,
 		Port: port,
 	})
-	defer conn.Close()
 
-	App.DB = conn
+	App.DB = dbCon
 	App.Name = "file uploader application"
-	newLogger := log.New(os.Stdout, "FileUploader" , log.Ldate|log.Ltime)
-	App.Logger = newLogger
 
 	controller.SetApp(&App)
 

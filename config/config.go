@@ -1,12 +1,12 @@
 package config
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 	"log"
 )
 
 type App struct {
 	Name string
 	Logger *log.Logger
-	DB *sql.DB
+	DB *gorm.DB
 }

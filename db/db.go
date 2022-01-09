@@ -1,14 +1,21 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	"github.com/erfidev/file-uploader/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 )
 
+var App *config.App
+
+func SetApp(a *config.App){
+	App = a
+}
+
 type SQLDB interface {
-	Connect() *sql.DB
+	Connect() *gorm.DB
 }
 
 type Postgresql struct {
@@ -20,22 +27,17 @@ type Postgresql struct {
 }
 
 
-func (p Postgresql) Connect() *sql.DB {
-	fmt.Println(p)
+func (p Postgresql) Connect() *gorm.DB {
 	connString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable", p.Host,p.Port,p.DbName,p.DbUser,p.DbPass)
-	conn ,err := sql.Open("postgres" , connString)
+	db ,err := gorm.Open(postgres.Open(connString), &gorm.Config{})
+	App.Logger.Println("DB connect!")
 	if err != nil {
 		log.Fatalf("Error on opening db: %s", err)
 	}
 
-	err = conn.Ping()
-	if err != nil {
-		log.Fatalf("Ping db error: %s", err)
-	}
-
-	return conn
+	return db
 }
 
-func Connect(db SQLDB) *sql.DB {
+func Connect(db SQLDB) *gorm.DB {
 	return db.Connect()
 }
