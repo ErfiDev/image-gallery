@@ -4,6 +4,7 @@ import (
 	"github.com/erfidev/file-uploader/config"
 	"github.com/erfidev/file-uploader/controller"
 	"github.com/erfidev/file-uploader/db"
+	"github.com/erfidev/file-uploader/db/models"
 	"github.com/erfidev/file-uploader/protobuf"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -42,6 +43,15 @@ func main() {
 		Port: port,
 	})
 
+	err = dbCon.AutoMigrate(models.Users{})
+	if err != nil {
+		App.Logger.Fatalf("error on migrating schema: %s", err)
+	}
+	err = dbCon.AutoMigrate(models.Files{})
+	if err != nil {
+		App.Logger.Fatalf("error on migrating schema: %s", err)
+	}
+
 	App.DB = dbCon
 	App.Name = "file uploader application"
 
@@ -50,9 +60,9 @@ func main() {
 	server := grpc.NewServer()
 	protobuf.RegisterFileUploaderServer(server , controller.FileUploader{})
 
-	log.Println("on port 5000 running")
+	App.Logger.Println("on port 5000 running")
 	if err := server.Serve(lis); err != nil {
-		log.Fatalf("error on serving server: %s", err)
+		App.Logger.Fatalf("error on serving server: %s", err)
 	}
 }
 

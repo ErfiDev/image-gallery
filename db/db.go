@@ -5,7 +5,6 @@ import (
 	"github.com/erfidev/file-uploader/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 var App *config.App
@@ -32,7 +31,7 @@ func (p Postgresql) Connect() *gorm.DB {
 	db ,err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	App.Logger.Println("DB connect!")
 	if err != nil {
-		log.Fatalf("Error on opening db: %s", err)
+		App.Logger.Fatalf("Error on opening db: %s", err)
 	}
 
 	return db
