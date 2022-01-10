@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.for-add-impor {
+    margin: 0 0 0 10px !important;
+}
+@media all and (max-width: 760px) {
+    .for-add-impor {
+        margin-top: 5px !important;
+    }
+}
