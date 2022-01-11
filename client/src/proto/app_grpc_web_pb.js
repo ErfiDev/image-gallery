@@ -134,16 +134,16 @@ proto.protobuf.FileUploaderPromiseClient.prototype.upload =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.protobuf.Req,
+ *   !proto.protobuf.EditReq,
  *   !proto.protobuf.Res>}
  */
 const methodDescriptor_FileUploader_Edit = new grpc.web.MethodDescriptor(
   '/protobuf.FileUploader/Edit',
   grpc.web.MethodType.UNARY,
-  proto.protobuf.Req,
+  proto.protobuf.EditReq,
   proto.protobuf.Res,
   /**
-   * @param {!proto.protobuf.Req} request
+   * @param {!proto.protobuf.EditReq} request
    * @return {!Uint8Array}
    */
   function(request) {
@@ -154,7 +154,7 @@ const methodDescriptor_FileUploader_Edit = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.protobuf.Req} request The
+ * @param {!proto.protobuf.EditReq} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
@@ -175,7 +175,7 @@ proto.protobuf.FileUploaderClient.prototype.edit =
 
 
 /**
- * @param {!proto.protobuf.Req} request The
+ * @param {!proto.protobuf.EditReq} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
