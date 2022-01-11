@@ -10,6 +10,7 @@ message Req {
 
 message EditReq {
   string id = 1;
+  Req fields = 2;
 }
 
 message DeleteReq {
