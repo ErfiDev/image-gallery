@@ -7,6 +7,8 @@ module.exports = {
       },
       minHeight: {
         forHeader: "10vh",
+        forMain: "70vh",
+        forPost: "80vh",
       },
     },
   },
