@@ -14,7 +14,7 @@ message EditReq {
 }
 
 message DeleteReq {
-  string uuid = 1;
+  string id = 1;
 }
 
 message Res {
