@@ -96,6 +96,16 @@ func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.
 }
 
 func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*protobuf.Res, error) {
+	tx := App.DB.Delete(&models.Files{} , req.GetId())
+	if tx.RowsAffected == 1 {
+		return &protobuf.Res{
+			Status: 200,
+			Msg: "file deleted!",
+		} , nil
+	}
 
-	return &protobuf.Res{} , nil
+	return &protobuf.Res{
+		Status: 500,
+		Msg: "error on finding file!",
+	} , nil
 }

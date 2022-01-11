@@ -16,11 +16,10 @@ func main() {
 
 	client := protobuf.NewFileUploaderClient(con)
 
-	req := protobuf.EditReq{
+	req := protobuf.DeleteReq{
 		Id: "1",
-		Fields: &protobuf.Req{Addr: "flower.png",},
 	}
-	result, err := client.Edit(context.Background() , &req)
+	result, err := client.Delete(context.Background() , &req)
 	if err != nil {
 		log.Fatal(err)
 	}
