@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileUploaderClient interface {
 	Upload(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Res, error)
-	Edit(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Res, error)
+	Edit(ctx context.Context, in *EditReq, opts ...grpc.CallOption) (*Res, error)
 	Delete(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*Res, error)
 }
 
@@ -40,7 +40,7 @@ func (c *fileUploaderClient) Upload(ctx context.Context, in *Req, opts ...grpc.C
 	return out, nil
 }
 
-func (c *fileUploaderClient) Edit(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Res, error) {
+func (c *fileUploaderClient) Edit(ctx context.Context, in *EditReq, opts ...grpc.CallOption) (*Res, error) {
 	out := new(Res)
 	err := c.cc.Invoke(ctx, "/protobuf.FileUploader/Edit", in, out, opts...)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *fileUploaderClient) Delete(ctx context.Context, in *DeleteReq, opts ...
 // for forward compatibility
 type FileUploaderServer interface {
 	Upload(context.Context, *Req) (*Res, error)
-	Edit(context.Context, *Req) (*Res, error)
+	Edit(context.Context, *EditReq) (*Res, error)
 	Delete(context.Context, *DeleteReq) (*Res, error)
 	mustEmbedUnimplementedFileUploaderServer()
 }
@@ -75,7 +75,7 @@ type UnimplementedFileUploaderServer struct {
 func (UnimplementedFileUploaderServer) Upload(context.Context, *Req) (*Res, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
-func (UnimplementedFileUploaderServer) Edit(context.Context, *Req) (*Res, error) {
+func (UnimplementedFileUploaderServer) Edit(context.Context, *EditReq) (*Res, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Edit not implemented")
 }
 func (UnimplementedFileUploaderServer) Delete(context.Context, *DeleteReq) (*Res, error) {
@@ -113,7 +113,7 @@ func _FileUploader_Upload_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _FileUploader_Edit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Req)
+	in := new(EditReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func _FileUploader_Edit_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/protobuf.FileUploader/Edit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileUploaderServer).Edit(ctx, req.(*Req))
+		return srv.(FileUploaderServer).Edit(ctx, req.(*EditReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

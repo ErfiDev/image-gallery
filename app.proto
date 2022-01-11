@@ -8,6 +8,10 @@ message Req {
   string addr = 2;
 }
 
+message EditReq {
+  string id = 1;
+}
+
 message DeleteReq {
   string uuid = 1;
 }
@@ -19,6 +23,6 @@ message Res {
 
 service FileUploader {
   rpc Upload(Req) returns (Res) {};
-  rpc Edit(Req) returns (Res) {};
+  rpc Edit(EditReq) returns (Res) {};
   rpc Delete(DeleteReq) returns (Res) {};
 }

@@ -67,10 +67,12 @@ func (FileUploader) Upload(ctx context.Context, req *protobuf.Req) (*protobuf.Re
 		Msg:    "created!",
 	} , nil
 }
-func (FileUploader) Edit(ctx context.Context, req *protobuf.Req) (*protobuf.Res, error) {
+
+func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.Res, error) {
 
 	return &protobuf.Res{} , nil
 }
+
 func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*protobuf.Res, error) {
 
 	return &protobuf.Res{} , nil
