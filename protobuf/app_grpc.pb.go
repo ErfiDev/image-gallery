@@ -21,6 +21,7 @@ type FileUploaderClient interface {
 	Upload(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Res, error)
 	Edit(ctx context.Context, in *EditReq, opts ...grpc.CallOption) (*Res, error)
 	Delete(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*Res, error)
+	Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (FileUploader_GetClient, error)
 }
 
 type fileUploaderClient struct {
@@ -58,6 +59,38 @@ func (c *fileUploaderClient) Delete(ctx context.Context, in *DeleteReq, opts ...
 	return out, nil
 }
 
+func (c *fileUploaderClient) Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (FileUploader_GetClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileUploader_ServiceDesc.Streams[0], "/protobuf.FileUploader/Get", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileUploaderGetClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileUploader_GetClient interface {
+	Recv() (*GetRes, error)
+	grpc.ClientStream
+}
+
+type fileUploaderGetClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileUploaderGetClient) Recv() (*GetRes, error) {
+	m := new(GetRes)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileUploaderServer is the server API for FileUploader service.
 // All implementations must embed UnimplementedFileUploaderServer
 // for forward compatibility
@@ -65,6 +98,7 @@ type FileUploaderServer interface {
 	Upload(context.Context, *Req) (*Res, error)
 	Edit(context.Context, *EditReq) (*Res, error)
 	Delete(context.Context, *DeleteReq) (*Res, error)
+	Get(*GetReq, FileUploader_GetServer) error
 	mustEmbedUnimplementedFileUploaderServer()
 }
 
@@ -80,6 +114,9 @@ func (UnimplementedFileUploaderServer) Edit(context.Context, *EditReq) (*Res, er
 }
 func (UnimplementedFileUploaderServer) Delete(context.Context, *DeleteReq) (*Res, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedFileUploaderServer) Get(*GetReq, FileUploader_GetServer) error {
+	return status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedFileUploaderServer) mustEmbedUnimplementedFileUploaderServer() {}
 
@@ -148,6 +185,27 @@ func _FileUploader_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileUploader_Get_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileUploaderServer).Get(m, &fileUploaderGetServer{stream})
+}
+
+type FileUploader_GetServer interface {
+	Send(*GetRes) error
+	grpc.ServerStream
+}
+
+type fileUploaderGetServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileUploaderGetServer) Send(m *GetRes) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // FileUploader_ServiceDesc is the grpc.ServiceDesc for FileUploader service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -168,6 +226,12 @@ var FileUploader_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FileUploader_Delete_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Get",
+			Handler:       _FileUploader_Get_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "app.proto",
 }

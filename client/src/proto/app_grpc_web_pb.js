@@ -253,5 +253,61 @@ proto.protobuf.FileUploaderPromiseClient.prototype.delete =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.protobuf.GetReq,
+ *   !proto.protobuf.GetRes>}
+ */
+const methodDescriptor_FileUploader_Get = new grpc.web.MethodDescriptor(
+  '/protobuf.FileUploader/Get',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.protobuf.GetReq,
+  proto.protobuf.GetRes,
+  /**
+   * @param {!proto.protobuf.GetReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.protobuf.GetRes.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.protobuf.GetReq} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.protobuf.GetRes>}
+ *     The XHR Node Readable Stream
+ */
+proto.protobuf.FileUploaderClient.prototype.get =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/protobuf.FileUploader/Get',
+      request,
+      metadata || {},
+      methodDescriptor_FileUploader_Get);
+};
+
+
+/**
+ * @param {!proto.protobuf.GetReq} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.protobuf.GetRes>}
+ *     The XHR Node Readable Stream
+ */
+proto.protobuf.FileUploaderPromiseClient.prototype.get =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/protobuf.FileUploader/Get',
+      request,
+      metadata || {},
+      methodDescriptor_FileUploader_Get);
+};
+
+
 module.exports = proto.protobuf;
 

@@ -22,8 +22,17 @@ message Res {
   string msg = 2;
 }
 
+message GetReq {};
+
+message GetRes {
+  string addr = 1;
+  int64 id = 2;
+  string name = 3;
+}
+
 service FileUploader {
   rpc Upload(Req) returns (Res) {};
   rpc Edit(EditReq) returns (Res) {};
   rpc Delete(DeleteReq) returns (Res) {};
+  rpc Get(GetReq) returns (stream GetRes) {};
 }
