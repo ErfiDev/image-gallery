@@ -8,12 +8,13 @@ const Posts = () => {
   let currentPage = useState(1);
   let postsPerPage = useState(10);
 
-  const client = new FileUploaderClient("https://localhost:5000");
+  const client = new FileUploaderClient("https://localhost:8000");
 
   useEffect(() => {
     let req = new GetReq();
-    client.get(req, [], (err, res) => {
-      console.log(err, res);
+    let stream = client.get(req, {});
+    stream.on("data", (res) => {
+      console.log(res);
     });
   }, [currentPage]);
 
