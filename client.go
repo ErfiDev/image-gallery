@@ -3,26 +3,51 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/erfidev/file-uploader/protobuf"
 	"google.golang.org/grpc"
-	"log"
 )
 
 func main() {
 	con, err := grpc.Dial("localhost:5000", grpc.WithInsecure())
+	defer con.Close()
 	if err != nil {
 		log.Fatalf("error on the dialing grpc: %s", err)
 	}
 
 	client := protobuf.NewFileUploaderClient(con)
 
-	req := protobuf.DeleteReq{
-		Id: "1",
-	}
-	result, err := client.Delete(context.Background() , &req)
-	if err != nil {
-		log.Fatal(err)
+	Get(client)
+}
+
+func Add(con protobuf.FileUploaderClient, name string) {
+	req := protobuf.Req{
+		Name: name,
+		Addr: "file.jpg",
 	}
 
-	fmt.Println(result)
+	_, err := con.Upload(context.Background() ,  &req)
+	if err != nil {
+		log.Fatalf("we have error on the uploading data: %s", err)
+	}
+}
+
+func Get(con protobuf.FileUploaderClient) {
+	req := protobuf.GetReq{}
+
+	result, err := con.Get(context.Background() , &req)
+	if err != nil {
+		log.Fatalf("we have error on the uploading data: %s", err)
+	}
+
+	for {
+		data, err := result.Recv()
+		if err != nil {
+			log.Fatalf("we have error on the reading data: %s", err)
+		}
+
+		fmt.Println(data)
+		fmt.Println(data.GetName())
+	}
 }

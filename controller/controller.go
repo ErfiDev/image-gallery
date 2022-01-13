@@ -2,12 +2,14 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"github.com/erfidev/file-uploader/config"
 	"github.com/erfidev/file-uploader/db/models"
 	"github.com/erfidev/file-uploader/protobuf"
 )
 
 var App *config.App
+
 func SetApp(a *config.App) {
 	App = a
 }
@@ -21,7 +23,7 @@ func (FileUploader) Upload(ctx context.Context, req *protobuf.Req) (*protobuf.Re
 	user := models.Users{
 		Name: req.GetName(),
 	}
-	tx := App.DB.Take(&user)
+	tx := App.DB.First(models.Users{} , fmt.Sprintf("name = %s" , req.GetName()))
 	if tx.RowsAffected == 0 {
 		newUser := models.Users{
 			Name: req.GetName(),
@@ -31,7 +33,7 @@ func (FileUploader) Upload(ctx context.Context, req *protobuf.Req) (*protobuf.Re
 		if result.RowsAffected == 1 {
 			file := models.Files{
 				UserId: int(newUser.ID),
-				Addr: req.GetAddr(),
+				Addr:   req.GetAddr(),
 			}
 
 			resFile := App.DB.Create(&file)
@@ -39,18 +41,17 @@ func (FileUploader) Upload(ctx context.Context, req *protobuf.Req) (*protobuf.Re
 				return &protobuf.Res{
 					Status: 201,
 					Msg:    "added!",
-				} , nil
+				}, nil
 			}
 		}
 		return &protobuf.Res{
 			Status: 500,
 			Msg:    "error on creating!",
-		} , nil
+		}, nil
 	}
-
 	file := models.Files{
 		UserId: int(user.ID),
-		Addr: req.GetAddr(),
+		Addr:   req.GetAddr(),
 	}
 
 	result := App.DB.Create(&file)
@@ -58,20 +59,19 @@ func (FileUploader) Upload(ctx context.Context, req *protobuf.Req) (*protobuf.Re
 		return &protobuf.Res{
 			Status: 500,
 			Msg:    "error on creating!",
-		} , nil
+		}, nil
 	}
-
 
 	return &protobuf.Res{
 		Status: 201,
 		Msg:    "created!",
-	} , nil
+	}, nil
 }
 
 func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.Res, error) {
 	file := models.Files{}
 
-	tx := App.DB.First(&file , "id = ?", req.GetId())
+	tx := App.DB.First(&file, "id = ?", req.GetId())
 	if tx.RowsAffected == 1 {
 		file.Addr = req.GetFields().GetAddr()
 
@@ -80,32 +80,58 @@ func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.
 			return &protobuf.Res{
 				Status: 500,
 				Msg:    "error on saving updated file!",
-			} , nil
+			}, nil
 		}
 
 		return &protobuf.Res{
 			Status: 200,
 			Msg:    "file updated!",
-		} , nil
+		}, nil
 	}
 
 	return &protobuf.Res{
 		Status: 404,
 		Msg:    "can't find file!",
-	} , nil
+	}, nil
 }
 
 func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*protobuf.Res, error) {
-	tx := App.DB.Delete(&models.Files{} , req.GetId())
+	tx := App.DB.Delete(&models.Files{}, req.GetId())
 	if tx.RowsAffected == 1 {
 		return &protobuf.Res{
 			Status: 200,
-			Msg: "file deleted!",
-		} , nil
+			Msg:    "file deleted!",
+		}, nil
 	}
 
 	return &protobuf.Res{
 		Status: 500,
-		Msg: "error on finding file!",
-	} , nil
+		Msg:    "error on finding file!",
+	}, nil
+}
+
+func (FileUploader) Get(req *protobuf.GetReq, file protobuf.FileUploader_GetServer) error {
+	result := App.DB.Model(&models.Users{}).Select("users.name, files.addr, files.id").Joins("left join files on (files.user_id = users.id)")
+	rows, err := result.Rows()
+	if err != nil {
+		App.Logger.Fatalf("error on finding files: %s", err)
+	}
+
+	for rows.Next() {
+		var fileX protobuf.GetRes
+		err := rows.Scan(
+			&fileX.Name,
+			&fileX.Addr,
+			&fileX.Id,
+		)
+		if err != nil {
+			App.Logger.Fatalf("error on scanning: %s", err)
+		}
+		err = file.Send(&fileX)
+		if err != nil {
+			App.Logger.Fatalf("error on server streaming: %s", err)
+		}
+	}
+
+	return nil
 }
