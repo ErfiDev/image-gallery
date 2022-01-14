@@ -30,9 +30,13 @@ message GetRes {
   string name = 3;
 }
 
+message Responses {
+  repeated GetRes res = 1;
+}
+
 service FileUploader {
   rpc Upload(Req) returns (Res) {};
   rpc Edit(EditReq) returns (Res) {};
   rpc Delete(DeleteReq) returns (Res) {};
-  rpc Get(GetReq) returns (stream GetRes) {};
+  rpc Get(GetReq) returns (Responses) {};
 }

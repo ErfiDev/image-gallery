@@ -14,10 +14,10 @@ const Input = () => {
           className="w-60 h-10 rounded-full text-gray-800 focus:border-purple-700 border-solid border-2 border-gray-700 p-1 pl-5 pr-5"
         />
       </div>
-      <div class="flex justify-center for-add-impor">
-        <div class="w-96">
+      <div className="flex justify-center for-add-impor">
+        <div className="w-96">
           <input
-            class="form-control
+            className="form-control
     block
     w-full
     px-2

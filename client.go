@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/erfidev/file-uploader/protobuf"
@@ -38,16 +37,8 @@ func Get(con protobuf.FileUploaderClient) {
 
 	result, err := con.Get(context.Background() , &req)
 	if err != nil {
-		log.Fatalf("we have error on the uploading data: %s", err)
+		log.Fatalf("error on geting data: %s", err)
 	}
 
-	for {
-		data, err := result.Recv()
-		if err != nil {
-			log.Fatalf("we have error on the reading data: %s", err)
-		}
-
-		fmt.Println(data)
-		fmt.Println(data.GetName())
-	}
+	log.Println(result.GetRes())
 }

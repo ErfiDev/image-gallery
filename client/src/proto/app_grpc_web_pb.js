@@ -257,13 +257,13 @@ proto.protobuf.FileUploaderPromiseClient.prototype.delete =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.protobuf.GetReq,
- *   !proto.protobuf.GetRes>}
+ *   !proto.protobuf.Responses>}
  */
 const methodDescriptor_FileUploader_Get = new grpc.web.MethodDescriptor(
   '/protobuf.FileUploader/Get',
-  grpc.web.MethodType.SERVER_STREAMING,
+  grpc.web.MethodType.UNARY,
   proto.protobuf.GetReq,
-  proto.protobuf.GetRes,
+  proto.protobuf.Responses,
   /**
    * @param {!proto.protobuf.GetReq} request
    * @return {!Uint8Array}
@@ -271,37 +271,42 @@ const methodDescriptor_FileUploader_Get = new grpc.web.MethodDescriptor(
   function(request) {
     return request.serializeBinary();
   },
-  proto.protobuf.GetRes.deserializeBinary
+  proto.protobuf.Responses.deserializeBinary
 );
 
 
 /**
- * @param {!proto.protobuf.GetReq} request The request proto
- * @param {?Object<string, string>=} metadata User defined
+ * @param {!proto.protobuf.GetReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.protobuf.GetRes>}
+ * @param {function(?grpc.web.RpcError, ?proto.protobuf.Responses)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.protobuf.Responses>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.protobuf.FileUploaderClient.prototype.get =
-    function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
       '/protobuf.FileUploader/Get',
       request,
       metadata || {},
-      methodDescriptor_FileUploader_Get);
+      methodDescriptor_FileUploader_Get,
+      callback);
 };
 
 
 /**
- * @param {!proto.protobuf.GetReq} request The request proto
+ * @param {!proto.protobuf.GetReq} request The
+ *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.protobuf.GetRes>}
- *     The XHR Node Readable Stream
+ * @return {!Promise<!proto.protobuf.Responses>}
+ *     Promise that resolves to the response
  */
 proto.protobuf.FileUploaderPromiseClient.prototype.get =
     function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
+  return this.client_.unaryCall(this.hostname_ +
       '/protobuf.FileUploader/Get',
       request,
       metadata || {},

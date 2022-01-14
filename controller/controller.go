@@ -110,12 +110,14 @@ func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*proto
 	}, nil
 }
 
-func (FileUploader) Get(req *protobuf.GetReq, file protobuf.FileUploader_GetServer) error {
+func (FileUploader) Get(ctx context.Context, req *protobuf.GetReq) (*protobuf.Responses, error) {
 	result := App.DB.Model(&models.Users{}).Select("users.name, files.addr, files.id").Joins("left join files on (files.user_id = users.id)")
 	rows, err := result.Rows()
 	if err != nil {
 		App.Logger.Fatalf("error on finding files: %s", err)
 	}
+
+	var resSlice []*protobuf.GetRes
 
 	for rows.Next() {
 		var fileX protobuf.GetRes
@@ -127,11 +129,11 @@ func (FileUploader) Get(req *protobuf.GetReq, file protobuf.FileUploader_GetServ
 		if err != nil {
 			App.Logger.Fatalf("error on scanning: %s", err)
 		}
-		err = file.Send(&fileX)
-		if err != nil {
-			App.Logger.Fatalf("error on server streaming: %s", err)
-		}
+
+		resSlice = append(resSlice, &fileX)
 	}
 
-	return nil
+	return &protobuf.Responses{
+		Res: resSlice,
+	} , nil
 }
