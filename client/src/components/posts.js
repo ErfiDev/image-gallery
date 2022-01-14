@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Post from "./post";
 import { FileUploaderClient } from "../proto/app_grpc_web_pb";
 import { GetReq } from "../proto/app_pb";
+import { toast } from "react-toastify";
 
 const Posts = () => {
   let [posts, setPosts] = useState([]);
@@ -13,22 +14,49 @@ const Posts = () => {
   useEffect(() => {
     let req = new GetReq();
     client.get(req, {}, (err, res) => {
-      console.log(err);
-      console.log(res);
+      if (err) {
+        toast.error("error on receiving data from server!", {
+          position: "bottom-left",
+          closeOnClick: true,
+        });
+        return;
+      }
+      setPosts(res.array[0]);
     });
-  }, [currentPage]);
+  }, []);
+
+  let firstPage = (currentPage - 1) * postsPerPage;
+  let lastPage = currentPage * postsPerPage;
+  let filterPosts = posts.slice(firstPage, lastPage);
 
   return (
     <section className="w-full">
       <div className="min-h-forMain h-auto flex flex-wrap justify-center align-start space-x-2 pt-5 gap-4">
-        {posts.map((item) => (
-          <Post name={item[2]} addr={item[0]} id={item[1]} />
-        ))}
+        {filterPosts.length === 0 ? (
+          <h1>Nothing</h1>
+        ) : (
+          filterPosts.map((item) => (
+            <Post name={item[2]} addr={item[0]} id={item[1]} />
+          ))
+        )}
       </div>
       <div className="w-full mt-5 flex justify-around align-center p-4">
-        <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-          Last
-        </button>
+        {currentPage === 1 ? (
+          <button
+            disabled
+            onClick={() => setCurrentPage(currentPage--)}
+            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded disabled:bg-gray-400 disabled:text-white disabled:border-none"
+          >
+            Last
+          </button>
+        ) : (
+          <button
+            onClick={() => setCurrentPage(currentPage--)}
+            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          >
+            Last
+          </button>
+        )}
         <button
           onClick={() => setCurrentPage(currentPage++)}
           className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
