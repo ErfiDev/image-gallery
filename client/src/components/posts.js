@@ -3,6 +3,7 @@ import Post from "./post";
 import { FileUploaderClient } from "../proto/app_grpc_web_pb";
 import { GetReq } from "../proto/app_pb";
 import { toast } from "react-toastify";
+import { Outlet } from "react-router-dom";
 
 const Posts = () => {
   let [posts, setPosts] = useState([]);
@@ -64,6 +65,7 @@ const Posts = () => {
           Next
         </button>
       </div>
+      <Outlet />
     </section>
   );
 };
