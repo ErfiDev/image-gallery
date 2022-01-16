@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import Post from "./post";
 import { GetReq } from "../proto/app_pb";
 import { toast } from "react-toastify";
-import { Outlet } from "react-router-dom";
 import { CTX } from "../context";
 
 const Posts = () => {
@@ -22,7 +21,7 @@ const Posts = () => {
         });
         return;
       }
-      setPosts(res.array[0]);
+      setPosts(res.array[0].reverse());
     });
   }, []);
 
@@ -65,7 +64,6 @@ const Posts = () => {
           Next
         </button>
       </div>
-      <Outlet />
     </section>
   );
 };

@@ -21,9 +21,8 @@ const App = () => {
       >
         <Input />
         <Routes>
-          <Route path="/" element={<Posts />}>
-            <Route path=":id" element={<EditElm />} />
-          </Route>
+          <Route path="/" element={<Posts />} />
+          <Route path="/:id" element={<EditElm />} />
         </Routes>
         <ToastContainer />
       </CTX.Provider>
