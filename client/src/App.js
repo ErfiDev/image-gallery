@@ -4,19 +4,29 @@ import Posts from "./components/posts";
 import { ToastContainer } from "react-toastify";
 import { Routes, Route } from "react-router-dom";
 import EditElm from "./components/editElm";
+import { FileUploaderClient } from "./proto/app_grpc_web_pb";
+import { CTX } from "./context";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/style.css";
 
 const App = () => {
+  const client = new FileUploaderClient("http://localhost:8080");
+
   return (
     <Fragment>
-      <Input />
-      <Routes>
-        <Route path="/" element={<Posts />}>
-          <Route path=":id" element={<EditElm />} />
-        </Route>
-      </Routes>
-      <ToastContainer />
+      <CTX.Provider
+        value={{
+          api: client,
+        }}
+      >
+        <Input />
+        <Routes>
+          <Route path="/" element={<Posts />}>
+            <Route path=":id" element={<EditElm />} />
+          </Route>
+        </Routes>
+        <ToastContainer />
+      </CTX.Provider>
     </Fragment>
   );
 };

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Post from "./post";
-import { FileUploaderClient } from "../proto/app_grpc_web_pb";
 import { GetReq } from "../proto/app_pb";
 import { toast } from "react-toastify";
 import { Outlet } from "react-router-dom";
+import { CTX } from "../context";
 
 const Posts = () => {
   let [posts, setPosts] = useState([]);
   let [currentPage, setCurrentPage] = useState(1);
   let [postsPerPage, setPostsPerPage] = useState(10);
 
-  const client = new FileUploaderClient("http://localhost:8080");
+  const app = useContext(CTX);
 
   useEffect(() => {
     let req = new GetReq();
-    client.get(req, {}, (err, res) => {
+    app.api.get(req, {}, (err, res) => {
       if (err) {
         toast.error("error on receiving data from server!", {
           position: "bottom-left",
