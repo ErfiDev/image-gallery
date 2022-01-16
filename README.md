@@ -1,6 +1,15 @@
-# gRPC API
+# about this practice
 
-- gRPC Framework
-- google protocol-buffer
-- Reactjs client side
-- User login and register service and auth
+simple application for creating, uploading, editing and deleting 
+posts.
+
+## stacks
+- go programming language
+- gRPC framework
+- HTTP/2
+- google protobuf
+- reactjs and react-router
+- envoyproxy
+- docker
+- sql database
+- gorm library
