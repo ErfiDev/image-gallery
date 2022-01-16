@@ -137,3 +137,12 @@ func (FileUploader) Get(ctx context.Context, req *protobuf.GetReq) (*protobuf.Re
 		Res: resSlice,
 	} , nil
 }
+
+func (FileUploader) GetOne(ctx context.Context, req *protobuf.GetSpecificFile) (*protobuf.GetRes, error) {
+	id := req.GetId()
+	var fileX protobuf.GetRes
+
+	App.DB.Model(&models.Files{}).Where("files.id = ?", id).Select("users.name, files.addr, files.id").Joins("left join users on files.user_id = users.id").Scan(&fileX)
+
+	return &fileX, nil
+}

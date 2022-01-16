@@ -314,5 +314,66 @@ proto.protobuf.FileUploaderPromiseClient.prototype.get =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.protobuf.GetSpecificFile,
+ *   !proto.protobuf.GetRes>}
+ */
+const methodDescriptor_FileUploader_GetOne = new grpc.web.MethodDescriptor(
+  '/protobuf.FileUploader/GetOne',
+  grpc.web.MethodType.UNARY,
+  proto.protobuf.GetSpecificFile,
+  proto.protobuf.GetRes,
+  /**
+   * @param {!proto.protobuf.GetSpecificFile} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.protobuf.GetRes.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.protobuf.GetSpecificFile} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.protobuf.GetRes)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.protobuf.GetRes>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.protobuf.FileUploaderClient.prototype.getOne =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/protobuf.FileUploader/GetOne',
+      request,
+      metadata || {},
+      methodDescriptor_FileUploader_GetOne,
+      callback);
+};
+
+
+/**
+ * @param {!proto.protobuf.GetSpecificFile} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.protobuf.GetRes>}
+ *     Promise that resolves to the response
+ */
+proto.protobuf.FileUploaderPromiseClient.prototype.getOne =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/protobuf.FileUploader/GetOne',
+      request,
+      metadata || {},
+      methodDescriptor_FileUploader_GetOne);
+};
+
+
 module.exports = proto.protobuf;
 

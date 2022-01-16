@@ -34,9 +34,14 @@ message Responses {
   repeated GetRes res = 1;
 }
 
+message GetSpecificFile {
+  int64 id = 1;
+}
+
 service FileUploader {
   rpc Upload(Req) returns (Res) {};
   rpc Edit(EditReq) returns (Res) {};
   rpc Delete(DeleteReq) returns (Res) {};
   rpc Get(GetReq) returns (Responses) {};
+  rpc GetOne(GetSpecificFile) returns (GetRes) {};
 }

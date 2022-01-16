@@ -22,6 +22,7 @@ type FileUploaderClient interface {
 	Edit(ctx context.Context, in *EditReq, opts ...grpc.CallOption) (*Res, error)
 	Delete(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*Res, error)
 	Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*Responses, error)
+	GetOne(ctx context.Context, in *GetSpecificFile, opts ...grpc.CallOption) (*GetRes, error)
 }
 
 type fileUploaderClient struct {
@@ -68,6 +69,15 @@ func (c *fileUploaderClient) Get(ctx context.Context, in *GetReq, opts ...grpc.C
 	return out, nil
 }
 
+func (c *fileUploaderClient) GetOne(ctx context.Context, in *GetSpecificFile, opts ...grpc.CallOption) (*GetRes, error) {
+	out := new(GetRes)
+	err := c.cc.Invoke(ctx, "/protobuf.FileUploader/GetOne", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileUploaderServer is the server API for FileUploader service.
 // All implementations must embed UnimplementedFileUploaderServer
 // for forward compatibility
@@ -76,6 +86,7 @@ type FileUploaderServer interface {
 	Edit(context.Context, *EditReq) (*Res, error)
 	Delete(context.Context, *DeleteReq) (*Res, error)
 	Get(context.Context, *GetReq) (*Responses, error)
+	GetOne(context.Context, *GetSpecificFile) (*GetRes, error)
 	mustEmbedUnimplementedFileUploaderServer()
 }
 
@@ -94,6 +105,9 @@ func (UnimplementedFileUploaderServer) Delete(context.Context, *DeleteReq) (*Res
 }
 func (UnimplementedFileUploaderServer) Get(context.Context, *GetReq) (*Responses, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedFileUploaderServer) GetOne(context.Context, *GetSpecificFile) (*GetRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOne not implemented")
 }
 func (UnimplementedFileUploaderServer) mustEmbedUnimplementedFileUploaderServer() {}
 
@@ -180,6 +194,24 @@ func _FileUploader_Get_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileUploader_GetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSpecificFile)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploaderServer).GetOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.FileUploader/GetOne",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploaderServer).GetOne(ctx, req.(*GetSpecificFile))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileUploader_ServiceDesc is the grpc.ServiceDesc for FileUploader service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +234,10 @@ var FileUploader_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _FileUploader_Get_Handler,
+		},
+		{
+			MethodName: "GetOne",
+			Handler:    _FileUploader_GetOne_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

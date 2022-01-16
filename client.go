@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/erfidev/file-uploader/protobuf"
@@ -17,7 +18,7 @@ func main() {
 
 	client := protobuf.NewFileUploaderClient(con)
 
-	Get(client)
+	GetOne(client)
 }
 
 func Add(con protobuf.FileUploaderClient, name string) {
@@ -41,4 +42,15 @@ func Get(con protobuf.FileUploaderClient) {
 	}
 
 	log.Println(result.GetRes())
+}
+
+func GetOne(con protobuf.FileUploaderClient) {
+	req := protobuf.GetSpecificFile{Id: 1000}
+
+	result, err := con.GetOne(context.Background() , &req)
+	if err != nil {
+		log.Fatalf("error on geting data: %s", err)
+	}
+
+	fmt.Println(result)
 }
