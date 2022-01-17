@@ -3,9 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/erfidev/file-uploader/config"
-	"github.com/erfidev/file-uploader/db/models"
-	"github.com/erfidev/file-uploader/protobuf"
+	"github.com/erfidev/image-gallery/config"
+	"github.com/erfidev/image-gallery/db/models"
+	"github.com/erfidev/image-gallery/protobuf"
 )
 
 var App *config.App

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/erfidev/file-uploader/config"
-	"github.com/erfidev/file-uploader/controller"
-	"github.com/erfidev/file-uploader/db"
-	"github.com/erfidev/file-uploader/db/models"
-	"github.com/erfidev/file-uploader/protobuf"
+	"github.com/erfidev/image-gallery/config"
+	"github.com/erfidev/image-gallery/controller"
+	"github.com/erfidev/image-gallery/db"
+	"github.com/erfidev/image-gallery/db/models"
+	"github.com/erfidev/image-gallery/protobuf"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"log"

@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/erfidev/file-uploader/config"
+	"github.com/erfidev/image-gallery/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

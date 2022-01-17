@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/erfidev/file-uploader/protobuf"
+	"github.com/erfidev/image-gallery/protobuf"
 	"google.golang.org/grpc"
 )
 
