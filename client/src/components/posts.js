@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { CTX } from "../context";
 
 const Posts = () => {
-  let [posts, setPosts] = useState([]);
   let [currentPage, setCurrentPage] = useState(1);
   let [postsPerPage, setPostsPerPage] = useState(10);
 
@@ -21,19 +20,19 @@ const Posts = () => {
         });
         return;
       }
-      setPosts(res.array[0].reverse());
+      app.edit(res.array[0].reverse(), "SET_POSTS");
     });
   }, []);
 
   let firstPage = (currentPage - 1) * postsPerPage;
   let lastPage = currentPage * postsPerPage;
-  let filterPosts = posts.slice(firstPage, lastPage);
+  let filterPosts = app.posts.slice(firstPage, lastPage);
 
   return (
     <section className="w-full">
       <div className="min-h-forMain h-auto flex flex-wrap justify-center align-start space-x-2 pt-5 gap-4">
         {filterPosts.length === 0 ? (
-          <h1>Nothing</h1>
+          <h1>Loading...</h1>
         ) : (
           filterPosts.map((item) => (
             <Post name={item[2]} addr={item[0]} id={item[1]} />

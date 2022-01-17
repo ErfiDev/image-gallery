@@ -2,7 +2,7 @@ import React, { useState, useRef, useContext } from "react";
 import { Add } from "@material-ui/icons";
 import GetBase64 from "../utils/base64";
 import { toast } from "react-toastify";
-import { Req } from "../proto/app_pb";
+import { Req, GetReq } from "../proto/app_pb";
 import { CTX } from "../context";
 
 const Input = () => {
@@ -34,6 +34,19 @@ const Input = () => {
           setName("");
           setBase64("");
           refInput.current.value = "";
+
+          let getReq = new GetReq();
+          app.api.get(getReq, {}, (err, res) => {
+            if (err) {
+              toast.error("error on receiving data from server!", {
+                position: "bottom-left",
+                closeOnClick: true,
+              });
+              return;
+            }
+            app.edit(res.array[0].reverse(), "SET_POSTS");
+          });
+
           return;
         } else {
           toast.info(res[1], {

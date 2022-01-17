@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import Input from "./components/input";
 import Posts from "./components/posts";
 import { ToastContainer } from "react-toastify";
@@ -10,13 +10,31 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles/style.css";
 
 const App = () => {
+  const [posts, setPosts] = useState([]);
   const client = new FileUploaderClient("http://localhost:8080");
+
+  function Edit(payload, action) {
+    switch (action) {
+      case "SET_POSTS":
+        setPosts(payload);
+        break;
+
+      case "CLEAR_POSTS":
+        setPosts([]);
+        break;
+
+      default:
+        return null;
+    }
+  }
 
   return (
     <Fragment>
       <CTX.Provider
         value={{
           api: client,
+          edit: Edit,
+          posts,
         }}
       >
         <Input />
