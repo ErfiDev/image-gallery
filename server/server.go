@@ -57,7 +57,7 @@ func main() {
 
 	controller.SetApp(&App)
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(grpc.MaxSendMsgSize(10000000000000000),grpc.MaxRecvMsgSize(10000000000000000))
 	protobuf.RegisterFileUploaderServer(server , controller.FileUploader{})
 
 	App.Logger.Println("on port 5000 running")

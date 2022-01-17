@@ -96,22 +96,23 @@ func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.
 }
 
 func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*protobuf.Res, error) {
-	tx := App.DB.Delete(&models.Files{}, req.GetId())
+	tx := App.DB.Where("id = ?", req.GetId()).Delete(&models.Files{})
+	fmt.Println(tx.RowsAffected)
 	if tx.RowsAffected == 1 {
 		return &protobuf.Res{
 			Status: 200,
 			Msg:    "file deleted!",
 		}, nil
 	}
+		return &protobuf.Res{
+			Status: 500,
+			Msg:    "error on finding file!",
+		}, nil
 
-	return &protobuf.Res{
-		Status: 500,
-		Msg:    "error on finding file!",
-	}, nil
 }
 
 func (FileUploader) Get(ctx context.Context, req *protobuf.GetReq) (*protobuf.Responses, error) {
-	result := App.DB.Model(&models.Users{}).Select("users.name, files.addr, files.id").Joins("left join files on (files.user_id = users.id)")
+	result := App.DB.Model(&models.Files{}).Select("users.name, files.addr, files.id").Joins("left join users on files.user_id = users.id")
 	rows, err := result.Rows()
 	if err != nil {
 		App.Logger.Fatalf("error on finding files: %s", err)
