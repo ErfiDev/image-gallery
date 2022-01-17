@@ -1,0 +1,33 @@
+version: "3.1"
+
+services:
+  client:
+    build: "./client"
+    container_name: "image-gallery-client"
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - image-gallery
+
+  envoy:
+    build: "./envoy"
+    container_name: "image-gallery-envoyproxy"
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - image-gallery
+
+  server:
+    build: "."
+    container_name: "image-gallery-server"
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - image-gallery
+
+networks:
+  image-gallery:
+    driver: bridge
