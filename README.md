@@ -13,3 +13,18 @@ posts.
 - docker
 - sql database
 - gorm library
+
+
+## how to run?
+run the 
+```
+    docker-compose up --build
+```
+
+and then if everything is successful run
+the server by command
+```
+    go run server/server.go
+```
+
+don't forget adding .env necessary variables

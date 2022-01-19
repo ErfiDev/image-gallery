@@ -97,7 +97,6 @@ func (FileUploader) Edit(ctx context.Context, req *protobuf.EditReq) (*protobuf.
 
 func (FileUploader) Delete(ctx context.Context, req *protobuf.DeleteReq) (*protobuf.Res, error) {
 	tx := App.DB.Where("id = ?", req.GetId()).Delete(&models.Files{})
-	fmt.Println(tx.RowsAffected)
 	if tx.RowsAffected == 1 {
 		return &protobuf.Res{
 			Status: 200,

@@ -1,23 +1,12 @@
 version: "3.9"
 
 services:
-  server:
-    build: "."
-    container_name: "image-gallery-server"
-    restart: always
-    ports:
-      - "5000:5000"
-    depends_on:
-      - psdb
-    networks:
-      - image-gallery
-
   psdb:
     image: postgres
     container_name: "image-gallery-psdb"
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_PASSWORD: 12345678
       POSTGRES_USER: "postgres"
@@ -31,8 +20,6 @@ services:
     restart: always
     ports:
       - "8080:8080"
-    depends_on:
-      - server
     networks:
       - image-gallery
 

@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error on tcp listen: %s", err)
 	}
-	newLogger := log.New(os.Stdout, "FileUploader" , log.Ldate|log.Ltime)
+	newLogger := log.New(os.Stdout, "image-gallery" , log.Ldate|log.Ltime)
 	App.Logger = newLogger
 	db.SetApp(&App)
 
@@ -53,7 +53,7 @@ func main() {
 	}
 
 	App.DB = dbCon
-	App.Name = "file uploader application"
+	App.Name = "image gallery application"
 
 	controller.SetApp(&App)
 
